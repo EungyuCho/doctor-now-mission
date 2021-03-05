@@ -32,9 +32,7 @@ export class UserService {
         return { ok: false, error: 'There is a user with that email already' };
       }
 
-      const user = await this.users.save(
-        this.users.create({ email, password, name, role }),
-      );
+      const user = this.users.create({ email, password, name, role });
 
       await this.users.save(user);
 
