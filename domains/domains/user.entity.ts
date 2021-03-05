@@ -2,7 +2,7 @@ import { Entity, Column, OneToMany, BeforeInsert, BeforeUpdate } from "typeorm";
 import { CoreEntity } from "./core.entity";
 import { Comment } from "./comment.entity";
 import { Board } from "./board.entity";
-import * as bcrypt from "bcrypt";
+import * as bcrypt from "bcryptjs";
 
 export enum UserRole {
   USER = "USER",
@@ -23,7 +23,6 @@ export class User extends CoreEntity {
   @Column({ type: "enum", enum: UserRole })
   role: UserRole;
 
-  @Column()
   @OneToMany(
     type => Comment,
     comment => comment.user

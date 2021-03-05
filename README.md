@@ -20,11 +20,16 @@
 ### 1. 공통 도메인 빌드
 
 ```bash
-cd domains
+cd commons
 yarn install
 yarn build
 ```
 
+```bash
+cd domains
+yarn install
+yarn build
+```
 ### 2. 서버 구동
 
 ```shell

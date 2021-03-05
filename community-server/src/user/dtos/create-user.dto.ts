@@ -1,3 +1,5 @@
+import { CoreOutput } from '../../../../commons/commons/dtos';
+
 export class CreateAccountInput {
   email: string;
   password: string;
@@ -5,7 +7,4 @@ export class CreateAccountInput {
   userRole: string;
 }
 
-export class CreateAccountOutput {
-  ok: boolean;
-  error?: string;
-}
+export class CreateAccountOutput extends CoreOutput {}
