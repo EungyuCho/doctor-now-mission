@@ -1,4 +1,7 @@
 import { User, Doctor } from "./domains";
+import { Board } from "./domains/board.entity";
+import { Diagnosis } from "./domains/diagnosis.entity";
+import { Comment } from "./domains/comment.entity";
 
 export const ormConfig = {
   type: "postgres",
@@ -7,6 +10,6 @@ export const ormConfig = {
   username: "myuser",
   password: "1q2w3e4r",
   database: "mydb",
-  entities: [User, Doctor],
-  synchronize: true,
+  entities: [User, Doctor, Board, Diagnosis, Comment],
+  synchronize: true
 };

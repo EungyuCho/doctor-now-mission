@@ -1,18 +1,15 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-} from "typeorm";
+import { Entity, Column, OneToMany } from "typeorm";
+import { CoreEntity } from "./core.entity";
+import { Comment } from "./comment.entity";
 
 @Entity()
-export class Doctor {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Doctor extends CoreEntity {
   @Column({ type: "varchar", length: 20, nullable: false })
   name: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @OneToMany(
+    type => Comment,
+    comment => comment.doctor
+  )
+  comments: Comment[];
 }
