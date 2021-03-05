@@ -1,4 +1,4 @@
-import { User, Doctor } from "./domains";
+import { User } from "./domains";
 import { Board } from "./domains/board.entity";
 import { Diagnosis } from "./domains/diagnosis.entity";
 import { Comment } from "./domains/comment.entity";
@@ -10,6 +10,6 @@ export const ormConfig = {
   username: "myuser",
   password: "1q2w3e4r",
   database: "mydb",
-  entities: [User, Doctor, Board, Diagnosis, Comment],
+  entities: [User, Board, Diagnosis, Comment],
   synchronize: true
 };

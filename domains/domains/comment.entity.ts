@@ -1,7 +1,6 @@
 import { Entity, Column, ManyToOne } from "typeorm";
 import { CoreEntity } from "./core.entity";
 import { User } from "./user.entity";
-import { Doctor } from "./doctor.entity";
 import { Board } from "./board.entity";
 
 @Entity()
@@ -22,11 +21,4 @@ export class Comment extends CoreEntity {
     { nullable: true, onDelete: "SET NULL", eager: true }
   )
   user: User;
-
-  @ManyToOne(
-    type => User,
-    user => user.comments,
-    { nullable: true, onDelete: "SET NULL", eager: true }
-  )
-  doctor: Doctor;
 }

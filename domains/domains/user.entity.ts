@@ -3,6 +3,11 @@ import { CoreEntity } from "./core.entity";
 import { Comment } from "./comment.entity";
 import { Board } from "./board.entity";
 
+export enum UserRole {
+  USER = "USER",
+  Doctor = "Doctor"
+}
+
 @Entity()
 export class User extends CoreEntity {
   @Column({ type: "varchar", length: 20, nullable: false })
@@ -19,4 +24,7 @@ export class User extends CoreEntity {
     board => board.user
   )
   boards: Board[];
+
+  @Column({ type: "enum", enum: UserRole })
+  role: UserRole;
 }
