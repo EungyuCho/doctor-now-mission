@@ -24,7 +24,7 @@ services:
       - /usr/src/diagnosis/node_modules
       - ./diagnosis-server:/usr/src/diagnosis
       - ./domains:/usr/src/domains
-      - ./common:/usr/src/commons
+      - ./commons:/usr/src/commons
     depends_on:
       - postgres
 

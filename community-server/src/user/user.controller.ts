@@ -5,11 +5,11 @@ import {
 } from './dtos/create-user.dto';
 import { UserService } from './user.service';
 
-@Controller('user')
+@Controller('api/user')
 export class UserController {
   constructor(private readonly usersService: UserService) {}
 
-  @Post('/api/user')
+  @Post('createAccount')
   createAccount(
     @Body() createAccountInput: CreateAccountInput,
   ): Promise<CreateAccountOutput> {
