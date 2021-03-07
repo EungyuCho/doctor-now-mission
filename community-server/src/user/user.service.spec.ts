@@ -3,12 +3,20 @@ import { UserService } from './user.service';
 import { Repository } from 'typeorm';
 import { User } from '../../../domains/domains';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { UserRole } from '../../../domains/domains/user.entity';
+import { JwtService } from '../jwt/jwt.service';
 
 const mockRepository = () => ({
   findOne: jest.fn(),
   save: jest.fn(),
   create: jest.fn(),
+  findOneOrFail: jest.fn(),
 });
+
+const mockJwtService = {
+  sign: jest.fn(() => 'token'),
+  verify: jest.fn(),
+};
 
 type MockRepository<T = any> = Partial<
   Record<keyof Repository<User>, jest.Mock>
@@ -16,6 +24,7 @@ type MockRepository<T = any> = Partial<
 
 describe('UserService', () => {
   let service: UserService;
+  let jwtService: JwtService;
   let userRepository: MockRepository<User>;
 
   beforeEach(async () => {
@@ -26,10 +35,15 @@ describe('UserService', () => {
           provide: getRepositoryToken(User),
           useValue: mockRepository(),
         },
+        {
+          provide: JwtService,
+          useValue: mockJwtService,
+        },
       ],
     }).compile();
 
     service = module.get<UserService>(UserService);
+    jwtService = module.get<JwtService>(JwtService);
     userRepository = module.get(getRepositoryToken(User));
   });
 
@@ -109,6 +123,7 @@ describe('UserService', () => {
       email: 'cho2304@naver.com',
       password: '1111',
     };
+
     it('it should fail on exception', async () => {
       userRepository.findOne.mockRejectedValue(new Error());
       const result = await service.login(loginArgs);
@@ -134,6 +149,7 @@ describe('UserService', () => {
 
     it('should return token on success', async () => {
       userRepository.findOne.mockResolvedValue({
+        id: 1,
         email: loginArgs.email,
         password: loginArgs.password,
         checkPassword: jest.fn(() => Promise.resolve(true)),
@@ -142,8 +158,38 @@ describe('UserService', () => {
       const result = await service.login(loginArgs);
       expect(userRepository.findOne).toHaveBeenCalledTimes(1);
       expect(userRepository.findOne).toHaveBeenCalledWith(loginArgs.email);
+      expect(jwtService.sign).toHaveBeenCalledTimes(1);
+      expect(jwtService.sign).toHaveBeenCalledWith(1);
 
       expect(result).toEqual({ ok: true, token: 'token' });
+    });
+  });
+
+  describe('findById', () => {
+    const id = {
+      id: 1,
+    };
+
+    it('it should fail on exception', async () => {
+      userRepository.findOneOrFail.mockRejectedValue(new Error());
+      const result = await service.findById(id);
+
+      expect(result).toEqual({ ok: false, error: 'User not found' });
+    });
+
+    it('it should return user on success', async () => {
+      const user = {
+        id: 1,
+        email: 'cho2304@naver.com',
+        role: UserRole.USER,
+      };
+      userRepository.findOneOrFail.mockResolvedValue(user);
+      const result = await service.findById(id);
+
+      expect(userRepository.findOneOrFail).toHaveBeenCalledTimes(1);
+      expect(userRepository.findOneOrFail).toHaveBeenCalledWith(id);
+
+      expect(result).toEqual({ ok: true, user });
     });
   });
 });
