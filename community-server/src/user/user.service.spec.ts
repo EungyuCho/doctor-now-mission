@@ -45,6 +45,12 @@ describe('UserService', () => {
       userRole: 'user',
     };
 
+    it('it should fail on exception', async () => {
+      userRepository.findOne.mockRejectedValue(new Error());
+      const result = await service.createAccount(createAccountArg);
+      expect(result).toEqual({ ok: false, error: 'Could not Create Account' });
+    });
+
     it('should fail if role is wrong', async () => {
       const wrongAccount = {
         name: 'gyu',
@@ -95,6 +101,49 @@ describe('UserService', () => {
       expect(userRepository.save).toHaveBeenCalledWith(roleChangedAccount);
 
       expect(result).toEqual({ ok: true });
+    });
+  });
+
+  describe('login', () => {
+    const loginArgs = {
+      email: 'cho2304@naver.com',
+      password: '1111',
+    };
+    it('it should fail on exception', async () => {
+      userRepository.findOne.mockRejectedValue(new Error());
+      const result = await service.login(loginArgs);
+      expect(result).toEqual({ ok: false, error: 'Could not login' });
+    });
+
+    it('it should fail if email not exists', async () => {
+      userRepository.findOne.mockResolvedValue(undefined);
+      const result = await service.login(loginArgs);
+      expect(result).toEqual({ ok: false, error: 'Email not exists' });
+    });
+
+    it('it should fail if password is wrong', async () => {
+      userRepository.findOne.mockResolvedValue({
+        email: loginArgs.email,
+        password: 'wrong',
+        checkPassword: jest.fn(() => Promise.resolve(false)),
+      });
+
+      const result = await service.login(loginArgs);
+      expect(result).toEqual({ ok: false, error: 'Password is wrong' });
+    });
+
+    it('should return token on success', async () => {
+      userRepository.findOne.mockResolvedValue({
+        email: loginArgs.email,
+        password: loginArgs.password,
+        checkPassword: jest.fn(() => Promise.resolve(true)),
+      });
+
+      const result = await service.login(loginArgs);
+      expect(userRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(userRepository.findOne).toHaveBeenCalledWith(loginArgs.email);
+
+      expect(result).toEqual({ ok: true, token: 'token' });
     });
   });
 });
