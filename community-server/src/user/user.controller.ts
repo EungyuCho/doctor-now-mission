@@ -4,6 +4,7 @@ import {
   CreateAccountOutput,
 } from './dtos/create-user.dto';
 import { UserService } from './user.service';
+import {LoginInput, LoginOutput} from "./dtos/login.dto";
 
 @Controller('api/user')
 export class UserController {
@@ -14,5 +15,9 @@ export class UserController {
     @Body() createAccountInput: CreateAccountInput,
   ): Promise<CreateAccountOutput> {
     return this.usersService.createAccount(createAccountInput);
+  }
+
+  login(@Body() loginInput: LoginInput): Promise<LoginOutput> {
+    return this.usersService.login(loginInput);
   }
 }
