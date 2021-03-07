@@ -8,11 +8,14 @@ import { User } from '../../../domains/domains';
 import { Repository } from 'typeorm';
 import { UserRole } from '../../../domains/domains/user.entity';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
+import { ProfileInput, ProfileOutput } from './dtos/profile.dto';
+import { JwtService } from '../jwt/jwt.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async createAccount({
@@ -59,12 +62,26 @@ export class UserService {
         return { ok: false, error: 'Password is wrong' };
       }
 
+      const token = this.jwtService.sign(user.id);
+
       return {
         ok: true,
-        token: 'token',
+        token,
       };
     } catch (error) {
       return { ok: false, error: 'Could not login' };
+    }
+  }
+
+  async findById({ id }: ProfileInput): Promise<ProfileOutput> {
+    try {
+      const user = await this.users.findOneOrFail({ id });
+      return {
+        ok: true,
+        user,
+      };
+    } catch (error) {
+      return { ok: false, error: 'User not found' };
     }
   }
 

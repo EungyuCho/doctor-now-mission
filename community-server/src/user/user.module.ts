@@ -7,5 +7,6 @@ import { domains } from '../../../domains';
   imports: [TypeOrmModule.forFeature([domains.User])],
   providers: [UserService],
   controllers: [UserController],
+  exports: [UserService],
 })
 export class UserModule {}
