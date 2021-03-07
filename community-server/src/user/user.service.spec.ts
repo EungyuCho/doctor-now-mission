@@ -96,12 +96,15 @@ describe('UserService', () => {
         name: 'gyu',
         email: 'cho2304@naver.com',
         password: '1111',
-        role: 'USER',
+        role: 'DOCTOR',
       };
       userRepository.findOne.mockResolvedValue(undefined);
       userRepository.create.mockReturnValue(roleChangedAccount);
 
-      const result = await service.createAccount(createAccountArg);
+      const result = await service.createAccount({
+        ...createAccountArg,
+        userRole: 'DOCTOR',
+      });
 
       expect(userRepository.findOne).toHaveBeenCalledTimes(1);
       expect(userRepository.findOne).toHaveBeenCalledWith(
