@@ -50,7 +50,10 @@ export class UserService {
 
   async login({ email, password }: LoginInput): Promise<LoginOutput> {
     try {
-      const user = await this.users.findOne(email);
+      const user = await this.users.findOne(
+        { email: email },
+        { select: ['id', 'password'] },
+      );
 
       if (!user) {
         return { ok: false, error: 'Email not exists' };

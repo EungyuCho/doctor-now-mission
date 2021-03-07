@@ -160,7 +160,14 @@ describe('UserService', () => {
 
       const result = await service.login(loginArgs);
       expect(userRepository.findOne).toHaveBeenCalledTimes(1);
-      expect(userRepository.findOne).toHaveBeenCalledWith(loginArgs.email);
+      expect(userRepository.findOne).toHaveBeenCalledWith(
+        {
+          email: loginArgs.email,
+        },
+        {
+          select: ['id', 'password'],
+        },
+      );
       expect(jwtService.sign).toHaveBeenCalledTimes(1);
       expect(jwtService.sign).toHaveBeenCalledWith(1);
 
