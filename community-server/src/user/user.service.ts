@@ -31,7 +31,7 @@ export class UserService {
         return { ok: false, error: 'Role must be USER OR DOCTOR' };
       }
 
-      const exists = await this.users.findOne(email);
+      const exists = await this.users.findOne({ email });
       if (exists) {
         return { ok: false, error: 'There is a user with that email already' };
       }

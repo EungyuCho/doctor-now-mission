@@ -3,6 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { ormConfig } from '../../domains/index';
 import { JwtModule } from './jwt/jwt.module';
+import { AuthModule } from './auth/auth.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -12,6 +14,8 @@ import { JwtModule } from './jwt/jwt.module';
       jwtSecretKey: 'secret_jwt_key',
       accessTokenExpire: 60,
     }),
+    AuthModule,
+    CommonModule,
   ],
   controllers: [],
   providers: [],

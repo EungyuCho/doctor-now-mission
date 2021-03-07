@@ -107,9 +107,9 @@ describe('UserService', () => {
       });
 
       expect(userRepository.findOne).toHaveBeenCalledTimes(1);
-      expect(userRepository.findOne).toHaveBeenCalledWith(
-        roleChangedAccount.email,
-      );
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        email: roleChangedAccount.email,
+      });
 
       expect(userRepository.create).toHaveBeenCalledTimes(1);
       expect(userRepository.create).toHaveBeenCalledWith(roleChangedAccount);
