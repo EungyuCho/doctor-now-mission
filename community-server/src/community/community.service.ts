@@ -54,17 +54,17 @@ export class CommunityService {
         });
       }
 
-      const boards = await boardBuilder.orderBy('board.id', 'DESC').getMany();
+      boardBuilder.orderBy('board.id', 'DESC');
+      const boards = await boardBuilder.getMany();
 
       return {
         ok: true,
         boards,
       };
     } catch (error) {
-      console.log(error);
       return {
         ok: false,
-        error: 'Could not search board',
+        error: 'Could not search boards',
       };
     }
   }
