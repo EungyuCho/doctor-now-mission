@@ -21,14 +21,7 @@ import {
   CreateCommentOutput,
 } from './dtos/create-comment.dto';
 import { DeleteBoardOutput } from './dtos/delete-board.dto';
-import {
-  ApiBasicAuth,
-  ApiBearerAuth,
-  ApiBody,
-  ApiHeader,
-  ApiQuery,
-  ApiResponse,
-} from '@nestjs/swagger';
+import { ApiHeader, ApiResponse } from '@nestjs/swagger';
 import { TOKEN_KEY } from '../../../commons/commons/common.constants';
 
 @Controller('api/community')
