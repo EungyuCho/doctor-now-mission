@@ -3,6 +3,7 @@ import { CoreEntity } from "./core.entity";
 import { Comment } from "./comment.entity";
 import { Board } from "./board.entity";
 import * as bcrypt from "bcryptjs";
+import { Diagnosis } from "./diagnosis.entity";
 
 export enum UserRole {
   USER = "USER",
@@ -34,6 +35,12 @@ export class User extends CoreEntity {
     board => board.user
   )
   boards: Board[];
+
+  @OneToMany(
+    type => Diagnosis,
+    diagnosis => diagnosis.user
+  )
+  diagnosis: Diagnosis[];
 
   @BeforeInsert()
   @BeforeUpdate()

@@ -5,7 +5,7 @@ import {
 } from './dtos/create-user.dto';
 import { UserService } from './user.service';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
-import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('api/user')
 export class UserController {
