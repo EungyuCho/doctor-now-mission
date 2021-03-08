@@ -4,6 +4,7 @@ import { Diagnosis, User } from '../../../domains/domains';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserRole } from '../../../domains/domains/user.entity';
+import { PrescribeInput } from './dtos/prescribe.dto';
 
 const mockRepository = () => ({
   findOne: jest.fn(),
@@ -151,6 +152,79 @@ describe('DiagnosisService', () => {
       expect(diagnosisRepository.save).toHaveBeenCalledWith(
         requestDiagnosisArgs,
       );
+      expect(result).toEqual({
+        ok: true,
+      });
+    });
+  });
+
+  describe('loadDiagnosis', () => {
+    const user = new User();
+    it('should be fail on exception', async () => {
+      diagnosisRepository.find.mockRejectedValue(new Error());
+      const result = await service.loadDiagnosis(user);
+      expect(result).toEqual({ ok: false, error: 'Could not load diagnosis' });
+    });
+
+    it('should be return diagnostics', async () => {
+      const diagnostics = [new Diagnosis()];
+      diagnosisRepository.find.mockResolvedValue(diagnostics);
+      const result = await service.loadDiagnosis(user);
+      expect(diagnosisRepository.find).toHaveBeenCalledTimes(1);
+      expect(diagnosisRepository.find).toHaveBeenCalledWith({
+        where: { user },
+      });
+      expect(result).toEqual({ ok: true, diagnostics });
+    });
+  });
+
+  describe('prescribe', () => {
+    const user = new User();
+    user.id = 3;
+    const prescribeInput: PrescribeInput = {
+      comment: '약 드세요',
+    };
+    const diagnosisId = 3;
+
+    it('should be fail on exception', async () => {
+      diagnosisRepository.findOne.mockRejectedValue(new Error());
+      const result = await service.prescribe(user, prescribeInput, diagnosisId);
+      expect(result).toEqual({ ok: false, error: 'Could not prescribe' });
+    });
+
+    it('should be fail on diagnosis not exists', async () => {
+      diagnosisRepository.findOne.mockResolvedValue(undefined);
+      const result = await service.prescribe(user, prescribeInput, diagnosisId);
+      expect(result).toEqual({ ok: false, error: 'Could not find diagnosis' });
+    });
+
+    it('should be fail on diagnosis doctor is wrong', async () => {
+      const wrongDiagnosis = new Diagnosis();
+      wrongDiagnosis.doctorId = 2;
+      diagnosisRepository.findOne.mockResolvedValue(wrongDiagnosis);
+      const result = await service.prescribe(user, prescribeInput, diagnosisId);
+      expect(result).toEqual({
+        ok: false,
+        error: 'You are not assigned doctor',
+      });
+    });
+
+    it('diagnosis comment will be change', async () => {
+      const correctDiagnosis = new Diagnosis();
+      correctDiagnosis.doctorId = 3;
+      diagnosisRepository.findOne.mockResolvedValue(correctDiagnosis);
+      diagnosisRepository.save.mockResolvedValue(true);
+      const result = await service.prescribe(user, prescribeInput, diagnosisId);
+
+      expect(diagnosisRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(diagnosisRepository.findOne).toHaveBeenCalledWith({
+        id: diagnosisId,
+      });
+
+      correctDiagnosis.comment = prescribeInput.comment;
+      expect(diagnosisRepository.save).toHaveBeenCalledTimes(1);
+      expect(diagnosisRepository.save).toHaveBeenCalledWith(correctDiagnosis);
+
       expect(result).toEqual({
         ok: true,
       });
