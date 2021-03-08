@@ -3,19 +3,19 @@ import { CoreOutput } from '../../common/dtos/output.dto';
 import { IsEmail, IsString } from 'class-validator';
 
 export class CreateAccountInput {
-  @ApiProperty()
+  @ApiProperty({ default: 'testingEmail@naver.com' })
   @IsEmail()
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({ default: '1111' })
   @IsString()
   password: string;
 
-  @ApiProperty()
+  @ApiProperty({ default: 'testing user' })
   @IsString()
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({ default: 'user', description: 'it will be user or doctor' })
   @IsString()
   userRole: string;
 }

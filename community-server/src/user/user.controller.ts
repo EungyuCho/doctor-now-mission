@@ -5,13 +5,13 @@ import {
 } from './dtos/create-user.dto';
 import { UserService } from './user.service';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
-import { ApiBody } from '@nestjs/swagger';
+import { ApiBody, ApiResponse } from '@nestjs/swagger';
 
 @Controller('api/user')
 export class UserController {
   constructor(private readonly usersService: UserService) {}
 
-  @ApiBody({ type: CreateAccountInput })
+  @ApiResponse({ type: CreateAccountOutput })
   @Post('account')
   createAccount(
     @Body() createAccountInput: CreateAccountInput,
@@ -19,7 +19,7 @@ export class UserController {
     return this.usersService.createAccount(createAccountInput);
   }
 
-  @ApiBody({ type: LoginInput })
+  @ApiResponse({ type: LoginOutput })
   @Post('login')
   login(@Body() loginInput: LoginInput): Promise<LoginOutput> {
     return this.usersService.login(loginInput);

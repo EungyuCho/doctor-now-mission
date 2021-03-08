@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CoreOutput {
-  @ApiProperty()
+  @ApiProperty({ nullable: true })
   error?: string;
 
   @ApiProperty()
