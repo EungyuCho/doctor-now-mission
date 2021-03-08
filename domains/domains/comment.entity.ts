@@ -8,7 +8,7 @@ export class Comment extends CoreEntity {
   @ManyToOne(
     type => Board,
     board => board.comments,
-    { onDelete: "SET NULL", eager: true }
+    { onDelete: "SET NULL" }
   )
   board: Board;
 

@@ -1,14 +1,9 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 import { CoreOutput } from '../../common/dtos/output.dto';
 
-export class UpdateBoardInput {
+export class CreateCommentInput {
   @IsString()
-  @IsOptional()
-  title?: string;
-
-  @IsString()
-  @IsOptional()
-  content?: string;
+  content: string;
 }
 
-export class UpdateBoardOutput extends CoreOutput {}
+export class CreateCommentOutput extends CoreOutput {}

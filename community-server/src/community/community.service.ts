@@ -6,6 +6,11 @@ import { CreateBoardInput, CreateBoardOutput } from './dtos/create-board.dto';
 import { SearchBoardInput, SearchBoardOutput } from './dtos/search-board.dto';
 import { OpenBoardOutput } from './dtos/open-board.dto';
 import { UpdateBoardInput, UpdateBoardOutput } from './dtos/update-board.dto';
+import {
+  CreateCommentInput,
+  CreateCommentOutput,
+} from './dtos/create-comment.dto';
+import { DeleteBoardOutput } from './dtos/delete-board.dto';
 
 @Injectable()
 export class CommunityService {
@@ -56,6 +61,8 @@ export class CommunityService {
         });
       }
 
+      boardBuilder.leftJoinAndSelect('board.comments', 'comment');
+      boardBuilder.leftJoinAndSelect('comment.user', 'user');
       boardBuilder.orderBy('board.id', 'DESC');
       const boards = await boardBuilder.getMany();
 
@@ -73,7 +80,10 @@ export class CommunityService {
 
   async openBoard(id: number): Promise<OpenBoardOutput> {
     try {
-      const board = await this.boards.findOne({ id });
+      const board = await this.boards.findOne(
+        { id },
+        { relations: ['comments'] },
+      );
 
       if (!board) {
         return {
@@ -131,6 +141,65 @@ export class CommunityService {
       return {
         ok: false,
         error: 'Could not update board',
+      };
+    }
+  }
+
+  async createComment(
+    boardId: number,
+    { content }: CreateCommentInput,
+    user: User,
+  ): Promise<CreateCommentOutput> {
+    try {
+      const board = await this.boards.findOne({ id: boardId });
+
+      if (!board) {
+        return {
+          ok: false,
+          error: 'Could not find board',
+        };
+      }
+
+      const comment = this.comments.create({ board, user, content });
+      await this.comments.save(comment);
+
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: 'Could not create comment',
+      };
+    }
+  }
+
+  async deleteBoard(boardId: number, user: User): Promise<DeleteBoardOutput> {
+    try {
+      const board = await this.boards.findOne({ id: boardId });
+
+      if (!board) {
+        return {
+          ok: false,
+          error: 'Could not find board',
+        };
+      }
+
+      if (board.userId !== user.id) {
+        return {
+          ok: false,
+          error: 'You are not owner',
+        };
+      }
+
+      await this.boards.delete({ id: boardId });
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: 'Could not delete board',
       };
     }
   }

@@ -127,7 +127,7 @@ describe('CommunityService', () => {
       };
       boardRepository.createQueryBuilder.mockReturnValue(queryBuilderMock);
       const result = await service.searchBoard({});
-      expect(queryBuilderMock.leftJoinAndSelect).toHaveBeenCalledTimes(0);
+      expect(queryBuilderMock.leftJoinAndSelect).toHaveBeenCalledTimes(2);
       expect(queryBuilderMock.where).toHaveBeenCalledTimes(0);
       expect(queryBuilderMock.getMany).toHaveBeenCalledTimes(1);
       expect(result).toEqual({ ok: true, boards });
@@ -143,7 +143,7 @@ describe('CommunityService', () => {
       };
       boardRepository.createQueryBuilder.mockReturnValue(queryBuilderMock);
       const result = await service.searchBoard({ title: 'title' });
-      expect(queryBuilderMock.leftJoinAndSelect).toHaveBeenCalledTimes(1);
+      expect(queryBuilderMock.leftJoinAndSelect).toHaveBeenCalledTimes(3);
       expect(queryBuilderMock.where).toHaveBeenCalledTimes(1);
       expect(queryBuilderMock.andWhere).toHaveBeenCalledTimes(0);
       expect(queryBuilderMock.getMany).toHaveBeenCalledTimes(1);
@@ -160,7 +160,7 @@ describe('CommunityService', () => {
       };
       boardRepository.createQueryBuilder.mockReturnValue(queryBuilderMock);
       const result = await service.searchBoard({ author: 'author' });
-      expect(queryBuilderMock.leftJoinAndSelect).toHaveBeenCalledTimes(1);
+      expect(queryBuilderMock.leftJoinAndSelect).toHaveBeenCalledTimes(3);
       expect(queryBuilderMock.where).toHaveBeenCalledTimes(1);
       expect(queryBuilderMock.andWhere).toHaveBeenCalledTimes(0);
       expect(queryBuilderMock.getMany).toHaveBeenCalledTimes(1);
@@ -180,7 +180,7 @@ describe('CommunityService', () => {
         title: 'title',
         author: 'author',
       });
-      expect(queryBuilderMock.leftJoinAndSelect).toHaveBeenCalledTimes(1);
+      expect(queryBuilderMock.leftJoinAndSelect).toHaveBeenCalledTimes(3);
       expect(queryBuilderMock.where).toHaveBeenCalledTimes(1);
       expect(queryBuilderMock.andWhere).toHaveBeenCalledTimes(1);
       expect(queryBuilderMock.getMany).toHaveBeenCalledTimes(1);
@@ -208,7 +208,10 @@ describe('CommunityService', () => {
       const result = await service.openBoard(boardId);
 
       expect(boardRepository.findOne).toHaveBeenCalledTimes(1);
-      expect(boardRepository.findOne).toHaveBeenCalledWith({ id: boardId });
+      expect(boardRepository.findOne).toHaveBeenCalledWith(
+        { id: boardId },
+        { relations: ['comments'] },
+      );
       expect(result).toEqual({ ok: true, board });
     });
   });
@@ -281,6 +284,7 @@ describe('CommunityService', () => {
 
       expect(result).toEqual({ ok: true });
     });
+
     it('it should be change(title and content)', async () => {
       const board = {
         userId: authUser.id,

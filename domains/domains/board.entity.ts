@@ -14,7 +14,7 @@ export class Board extends CoreEntity {
   @ManyToOne(
     type => User,
     user => user.boards,
-    { onDelete: "SET NULL" }
+    { onDelete: "SET NULL", eager: true }
   )
   user: User;
 
@@ -23,7 +23,7 @@ export class Board extends CoreEntity {
 
   @OneToMany(
     type => Comment,
-    comments => comments.user
+    comments => comments.board
   )
   comments: Comment[];
 }
