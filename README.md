@@ -96,3 +96,6 @@ docker-compose up
 ## 채점방법
 
 swagger를 이용해 작성하신 API 문서와 코드를 검토합니다.
+
+# 해결한 이슈
+docker 이슈 : https://github.com/EungyuCho/doctor-now-mission/issues/1

@@ -12,7 +12,7 @@ export class UserController {
   constructor(private readonly usersService: UserService) {}
 
   @ApiBody({ type: CreateAccountInput })
-  @Post('createAccount')
+  @Post('account')
   createAccount(
     @Body() createAccountInput: CreateAccountInput,
   ): Promise<CreateAccountOutput> {

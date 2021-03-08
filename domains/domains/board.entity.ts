@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany, ManyToOne } from "typeorm";
+import { Entity, Column, OneToMany, ManyToOne, RelationId } from "typeorm";
 import { CoreEntity } from "./core.entity";
 import { Comment } from "./comment.entity";
 import { User } from "./user.entity";
@@ -14,7 +14,7 @@ export class Board extends CoreEntity {
   @ManyToOne(
     type => User,
     user => user.boards,
-    { onDelete: "SET NULL", eager: true }
+    { onDelete: "SET NULL" }
   )
   user: User;
 

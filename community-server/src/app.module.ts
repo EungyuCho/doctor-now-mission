@@ -5,6 +5,7 @@ import { ormConfig } from '../../domains/index';
 import { JwtModule } from './jwt/jwt.module';
 import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
+import { CommunityModule } from './community/community.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CommonModule } from './common/common.module';
     }),
     AuthModule,
     CommonModule,
+    CommunityModule,
   ],
   controllers: [],
   providers: [],
