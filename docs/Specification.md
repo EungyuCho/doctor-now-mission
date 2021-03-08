@@ -11,7 +11,7 @@ POST api/diagnosis<br/>
 
 # 커뮤니티 서버
 의사 또는 유저가 회원가입 할 수 있어야 함<br/>
-POST api/user/createAccount<br/>
+POST api/user/account<br/>
 로그인 시 token을 받을 수 있어야 함<br/>
 POST api/user/login<br/>
 유저는 게시물을 작성할 수 있음<br/>

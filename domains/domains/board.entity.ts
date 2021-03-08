@@ -18,6 +18,9 @@ export class Board extends CoreEntity {
   )
   user: User;
 
+  @RelationId((board: Board) => board.user)
+  userId: number;
+
   @OneToMany(
     type => Comment,
     comments => comments.user

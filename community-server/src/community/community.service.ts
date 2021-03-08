@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import { Board, Comment, User } from '../../../domains/domains';
 import { CreateBoardInput, CreateBoardOutput } from './dtos/create-board.dto';
 import { SearchBoardInput, SearchBoardOutput } from './dtos/search-board.dto';
+import { OpenBoardOutput } from './dtos/open-board.dto';
+import { UpdateBoardInput, UpdateBoardOutput } from './dtos/update-board.dto';
 
 @Injectable()
 export class CommunityService {
@@ -65,6 +67,70 @@ export class CommunityService {
       return {
         ok: false,
         error: 'Could not search boards',
+      };
+    }
+  }
+
+  async openBoard(id: number): Promise<OpenBoardOutput> {
+    try {
+      const board = await this.boards.findOne({ id });
+
+      if (!board) {
+        return {
+          ok: false,
+          error: 'Could not find board',
+        };
+      }
+      return {
+        ok: true,
+        board,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: 'Could not open board',
+      };
+    }
+  }
+
+  async patchBoard(
+    boardId: number,
+    { title, content }: UpdateBoardInput,
+    user: User,
+  ): Promise<UpdateBoardOutput> {
+    try {
+      const board = await this.boards.findOne({ id: boardId });
+
+      if (!board) {
+        return {
+          ok: false,
+          error: 'Could not find board',
+        };
+      }
+
+      if (board.userId !== user.id) {
+        return {
+          ok: false,
+          error: 'You are not owner',
+        };
+      }
+
+      if (title) {
+        board.title = title;
+      }
+
+      if (content) {
+        board.content = content;
+      }
+
+      await this.boards.save(board);
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: 'Could not update board',
       };
     }
   }
