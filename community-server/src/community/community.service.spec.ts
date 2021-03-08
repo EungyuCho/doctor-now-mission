@@ -3,6 +3,7 @@ import { CommunityService } from './community.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Board, Comment, User } from '../../../domains/domains';
 import { Repository } from 'typeorm';
+import { UpdateBoardInput } from './dtos/update-board.dto';
 
 const mockRepository = () => ({
   findOne: jest.fn(),
@@ -184,6 +185,121 @@ describe('CommunityService', () => {
       expect(queryBuilderMock.andWhere).toHaveBeenCalledTimes(1);
       expect(queryBuilderMock.getMany).toHaveBeenCalledTimes(1);
       expect(result).toEqual({ ok: true, boards });
+    });
+  });
+
+  describe('OpenBoard', () => {
+    const boardId = 1;
+    const board = new Board();
+    it('should be fail on exception', async () => {
+      boardRepository.findOne.mockRejectedValue(new Error());
+      const result = await service.openBoard(boardId);
+      expect(result).toEqual({ ok: false, error: 'Could not open board' });
+    });
+
+    it('should be fail on board not exists', async () => {
+      boardRepository.findOne.mockResolvedValue(undefined);
+      const result = await service.openBoard(boardId);
+      expect(result).toEqual({ ok: false, error: 'Could not find board' });
+    });
+
+    it('should return board', async () => {
+      boardRepository.findOne.mockResolvedValue(board);
+      const result = await service.openBoard(boardId);
+
+      expect(boardRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(boardRepository.findOne).toHaveBeenCalledWith({ id: boardId });
+      expect(result).toEqual({ ok: true, board });
+    });
+  });
+
+  describe('patchBoard', () => {
+    const boardId = 1;
+    const patchBoardArgs: UpdateBoardInput = {};
+    const authUser = new User();
+    authUser.id = 1;
+
+    it('it should be fail on exception', async () => {
+      boardRepository.findOne.mockRejectedValue(new Error());
+      const result = await service.patchBoard(boardId, {}, authUser);
+      expect(result).toEqual({ ok: false, error: 'Could not update board' });
+    });
+
+    it('it should be fail on board not exists', async () => {
+      boardRepository.findOne.mockResolvedValue(undefined);
+      const result = await service.patchBoard(boardId, {}, authUser);
+      expect(result).toEqual({ ok: false, error: 'Could not find board' });
+    });
+
+    it('it should be fail on request user is not owner', async () => {
+      const board = {
+        userId: 1111,
+      };
+      boardRepository.findOne.mockResolvedValue(board);
+      const result = await service.patchBoard(boardId, {}, authUser);
+      expect(result).toEqual({ ok: false, error: 'You are not owner' });
+    });
+
+    it('it should be change(title)', async () => {
+      const board = {
+        userId: authUser.id,
+        title: 'before title',
+        content: 'before content',
+      };
+      boardRepository.findOne.mockResolvedValue(board);
+      const result = await service.patchBoard(
+        boardId,
+        { title: 'after title' },
+        authUser,
+      );
+      expect(boardRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(boardRepository.findOne).toHaveBeenCalledWith({ id: boardId });
+      expect(boardRepository.save).toHaveBeenCalledTimes(1);
+      expect(boardRepository.save).toHaveBeenCalledWith({
+        ...board,
+        title: 'after title',
+      });
+
+      expect(result).toEqual({ ok: true });
+    });
+    it('it should be change(content)', async () => {
+      const board = {
+        userId: authUser.id,
+        title: 'before title',
+        content: 'before content',
+      };
+      boardRepository.findOne.mockResolvedValue(board);
+      const result = await service.patchBoard(
+        boardId,
+        { content: 'after content' },
+        authUser,
+      );
+      expect(boardRepository.save).toHaveBeenCalledWith({
+        ...board,
+        content: 'after content',
+      });
+
+      expect(result).toEqual({ ok: true });
+    });
+    it('it should be change(title and content)', async () => {
+      const board = {
+        userId: authUser.id,
+        title: 'before title',
+        content: 'before content',
+      };
+      boardRepository.findOne.mockResolvedValue(board);
+      const result = await service.patchBoard(
+        boardId,
+        { title: 'after title', content: 'after content' },
+        authUser,
+      );
+      expect(boardRepository.save).toHaveBeenCalledWith({
+        ...board,
+        title: 'after title',
+        content: 'after content',
+      });
+
+      expect(result).toEqual({ ok: true });
     });
   });
 });

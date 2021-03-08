@@ -4,7 +4,7 @@ import { CoreOutput } from '../../common/dtos/output.dto';
 export class UpdateBoardInput {
   @IsString()
   @IsOptional()
-  title: string;
+  title?: string;
 
   @IsString()
   @IsOptional()
