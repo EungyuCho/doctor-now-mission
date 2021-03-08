@@ -67,7 +67,7 @@ export class DiagnosisService {
     } catch (error) {
       return {
         ok: false,
-        error: 'Diagnosis request is failed ',
+        error: 'Diagnosis request is failed',
       };
     }
   }

@@ -3,7 +3,6 @@ import { CommunityService } from './community.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Board, Comment, User } from '../../../domains/domains';
 import { Repository } from 'typeorm';
-import { UpdateBoardInput } from './dtos/update-board.dto';
 
 const mockRepository = () => ({
   findOne: jest.fn(),
