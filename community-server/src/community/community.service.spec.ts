@@ -10,6 +10,7 @@ const mockRepository = () => ({
   create: jest.fn(),
   save: jest.fn(),
   createQueryBuilder: jest.fn(),
+  delete: jest.fn(),
 });
 
 type BoardMockRepository<T = any> = Partial<
@@ -23,7 +24,7 @@ type CommentMockRepository<T = any> = Partial<
 describe('CommunityService', () => {
   let service: CommunityService;
   let boardRepository: BoardMockRepository<Board>;
-  let CommentRepository: CommentMockRepository<Comment>;
+  let commentRepository: CommentMockRepository<Comment>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -42,7 +43,7 @@ describe('CommunityService', () => {
 
     service = module.get<CommunityService>(CommunityService);
     boardRepository = module.get(getRepositoryToken(Board));
-    CommentRepository = module.get(getRepositoryToken(Comment));
+    commentRepository = module.get(getRepositoryToken(Comment));
   });
 
   it('should be defined', () => {
@@ -218,7 +219,6 @@ describe('CommunityService', () => {
 
   describe('patchBoard', () => {
     const boardId = 1;
-    const patchBoardArgs: UpdateBoardInput = {};
     const authUser = new User();
     authUser.id = 1;
 
@@ -304,6 +304,111 @@ describe('CommunityService', () => {
       });
 
       expect(result).toEqual({ ok: true });
+    });
+  });
+
+  describe('createComment', () => {
+    const boardId = 1;
+    const content = {
+      content: 'comment',
+    };
+    const board = new Board();
+    board.id = 1;
+    const user = new User();
+    it('it should be fail on exception', async () => {
+      boardRepository.findOne.mockRejectedValue(new Error());
+      const result = await service.createComment(boardId, content, user);
+      expect(result).toEqual({
+        ok: false,
+        error: 'Could not create comment',
+      });
+    });
+
+    it('it should be fail on board not exists', async () => {
+      boardRepository.findOne.mockResolvedValue(undefined);
+      const result = await service.createComment(boardId, content, user);
+      expect(result).toEqual({
+        ok: false,
+        error: 'Could not find board',
+      });
+    });
+
+    it('it should be create comment', async () => {
+      boardRepository.findOne.mockResolvedValue(board);
+      commentRepository.create.mockReturnValue({ board, user, content });
+      commentRepository.save.mockResolvedValue({ board, user, ...content });
+      const result = await service.createComment(boardId, content, user);
+
+      expect(boardRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(boardRepository.findOne).toHaveBeenCalledWith({ id: boardId });
+
+      expect(commentRepository.create).toHaveBeenCalledTimes(1);
+      expect(commentRepository.create).toHaveBeenCalledWith({
+        board,
+        user,
+        ...content,
+      });
+
+      expect(commentRepository.save).toHaveBeenCalledTimes(1);
+      expect(commentRepository.save).toHaveBeenCalledWith({
+        board,
+        user,
+        content,
+      });
+
+      expect(result).toEqual({
+        ok: true,
+      });
+    });
+  });
+
+  describe('deleteBoard', () => {
+    const boardId = 1;
+    const user = new User();
+    user.id = 1;
+    it('it should be fail on exception', async () => {
+      boardRepository.findOne.mockRejectedValue(new Error());
+      const result = await service.deleteBoard(boardId, user);
+      expect(result).toEqual({
+        ok: false,
+        error: 'Could not delete board',
+      });
+    });
+
+    it('it should be fail on board not exists', async () => {
+      boardRepository.findOne.mockResolvedValue(undefined);
+      const result = await service.deleteBoard(boardId, user);
+      expect(result).toEqual({
+        ok: false,
+        error: 'Could not find board',
+      });
+    });
+
+    it('it should be fail if user is not owner', async () => {
+      const board = new Board();
+      board.userId = 111;
+      boardRepository.findOne.mockResolvedValue(board);
+      const result = await service.deleteBoard(boardId, user);
+      expect(result).toEqual({
+        ok: false,
+        error: 'You are not owner',
+      });
+    });
+
+    it('it should be delete board', async () => {
+      const board = new Board();
+      board.userId = 1;
+      boardRepository.findOne.mockResolvedValue(board);
+      boardRepository.delete.mockResolvedValue(true);
+      const result = await service.deleteBoard(boardId, user);
+
+      expect(boardRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(boardRepository.findOne).toHaveBeenCalledWith({ id: boardId });
+      expect(boardRepository.delete).toHaveBeenCalledTimes(1);
+      expect(boardRepository.delete).toHaveBeenCalledWith({ id: boardId });
+      expect(result).toEqual({
+        ok: true,
+      });
     });
   });
 });
