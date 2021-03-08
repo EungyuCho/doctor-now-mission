@@ -8,6 +8,8 @@ import {
   RequestDiagnosisInput,
   RequestDiagnosisOutput,
 } from './dtos/request-diagnosis.dto';
+import { LoadDiagnosisOutput } from './dtos/load-diagnosis.dto';
+import { PrescribeInput, PrescribeOutput } from './dtos/prescribe.dto';
 
 @Injectable()
 export class DiagnosisService {
@@ -68,6 +70,57 @@ export class DiagnosisService {
       return {
         ok: false,
         error: 'Diagnosis request is failed',
+      };
+    }
+  }
+
+  async loadDiagnosis(user: User): Promise<LoadDiagnosisOutput> {
+    try {
+      const diagnostics = await this.diagnosis.find({ where: { user } });
+      return {
+        ok: true,
+        diagnostics,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: 'Could not load diagnosis',
+      };
+    }
+  }
+
+  async prescribe(
+    user: User,
+    { comment }: PrescribeInput,
+    diagnosisId: number,
+  ): Promise<PrescribeOutput> {
+    try {
+      const diagnosis = await this.diagnosis.findOne({ id: diagnosisId });
+
+      if (!diagnosis) {
+        return {
+          ok: false,
+          error: 'Could not find diagnosis',
+        };
+      }
+
+      if (diagnosis.doctorId !== user.id) {
+        return {
+          ok: false,
+          error: 'You are not assigned doctor',
+        };
+      }
+
+      diagnosis.comment = comment;
+
+      await this.diagnosis.save(diagnosis);
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: 'Could not prescribe',
       };
     }
   }
