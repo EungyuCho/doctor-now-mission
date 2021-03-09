@@ -10,6 +10,7 @@ import {
 } from './dtos/request-diagnosis.dto';
 import { LoadDiagnosisOutput } from './dtos/load-diagnosis.dto';
 import { PrescribeInput, PrescribeOutput } from './dtos/prescribe.dto';
+import { LoadDoctorDiagnosisOutput } from './dtos/doctor-load-diagnosis.dto';
 
 @Controller('api/diagnosis')
 export class DiagnosisController {
@@ -39,6 +40,14 @@ export class DiagnosisController {
   @Get('')
   loadDiagnosis(@AuthUser() user: User): Promise<LoadDiagnosisOutput> {
     return this.diagnosisService.loadDiagnosis(user);
+  }
+
+  @Role(['DOCTOR'])
+  @Get('/doctor/diagnosis')
+  loadDoctorDiagnosis(
+    @AuthUser() user: User,
+  ): Promise<LoadDoctorDiagnosisOutput> {
+    return this.diagnosisService.loadDoctorDiagnosis(user);
   }
 
   @Role(['DOCTOR'])

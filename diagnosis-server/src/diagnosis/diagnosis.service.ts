@@ -10,6 +10,7 @@ import {
 } from './dtos/request-diagnosis.dto';
 import { LoadDiagnosisOutput } from './dtos/load-diagnosis.dto';
 import { PrescribeInput, PrescribeOutput } from './dtos/prescribe.dto';
+import { LoadDoctorDiagnosisOutput } from './dtos/doctor-load-diagnosis.dto';
 
 @Injectable()
 export class DiagnosisService {
@@ -76,10 +77,10 @@ export class DiagnosisService {
 
   async loadDiagnosis(user: User): Promise<LoadDiagnosisOutput> {
     try {
-      const diagnostics = await this.diagnosis.find({ where: { user } });
+      const Diagnosis = await this.diagnosis.find({ where: { user } });
       return {
         ok: true,
-        diagnostics,
+        Diagnosis,
       };
     } catch (error) {
       return {
@@ -121,6 +122,26 @@ export class DiagnosisService {
       return {
         ok: false,
         error: 'Could not prescribe',
+      };
+    }
+  }
+
+  async loadDoctorDiagnosis(user: User): Promise<LoadDoctorDiagnosisOutput> {
+    try {
+      const diagnosis = await this.diagnosis.find({
+        where: {
+          doctorId: user.id,
+        },
+      });
+
+      return {
+        ok: true,
+        diagnosis,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: 'Could not load diagnosis',
       };
     }
   }
