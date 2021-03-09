@@ -167,14 +167,14 @@ describe('DiagnosisService', () => {
     });
 
     it('should be return diagnostics', async () => {
-      const diagnostics = [new Diagnosis()];
-      diagnosisRepository.find.mockResolvedValue(diagnostics);
+      const diagnosis = [new Diagnosis()];
+      diagnosisRepository.find.mockResolvedValue(diagnosis);
       const result = await service.loadDiagnosis(user);
       expect(diagnosisRepository.find).toHaveBeenCalledTimes(1);
       expect(diagnosisRepository.find).toHaveBeenCalledWith({
         where: { user },
       });
-      expect(result).toEqual({ ok: true, diagnostics });
+      expect(result).toEqual({ ok: true, diagnosis });
     });
   });
 
@@ -228,6 +228,29 @@ describe('DiagnosisService', () => {
       expect(result).toEqual({
         ok: true,
       });
+    });
+  });
+
+  describe('loadDoctorDiagnosis', () => {
+    const user = new User();
+    user.id = 2;
+
+    it('it should be fail on exception', async () => {
+      diagnosisRepository.find.mockRejectedValue(new Error());
+      const result = await service.loadDoctorDiagnosis(user);
+      expect(result).toEqual({ ok: false, error: 'Could not load diagnosis' });
+    });
+
+    it('it should be return diagnosis', async () => {
+      const diagnosis = [new Diagnosis()];
+      diagnosisRepository.find.mockResolvedValue(diagnosis);
+      const result = await service.loadDoctorDiagnosis(user);
+
+      expect(diagnosisRepository.find).toHaveBeenCalledTimes(1);
+      expect(diagnosisRepository.find).toHaveBeenCalledWith({
+        where: { doctorId: user.id },
+      });
+      expect(result).toEqual({ ok: true, diagnosis });
     });
   });
 });

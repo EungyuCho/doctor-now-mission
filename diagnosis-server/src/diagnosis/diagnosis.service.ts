@@ -80,7 +80,7 @@ export class DiagnosisService {
       const Diagnosis = await this.diagnosis.find({ where: { user } });
       return {
         ok: true,
-        Diagnosis,
+        diagnosis: Diagnosis,
       };
     } catch (error) {
       return {
