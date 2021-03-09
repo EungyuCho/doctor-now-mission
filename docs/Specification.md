@@ -3,8 +3,10 @@
 GET api/diagnosis/doctor<br/>
 유저는 임의의 의사를 선택하여 진료요청서를 작성함<br/>
 POST api/diagnosis/doctor/:id/diagnosis<br/>
+유저는 자신의 진료요청서를 조회할 수 있음<br/>
+GET /api/diagnosis/<br/>
 의사는 자신이 받은 진료 요청서 목록을 조회할 수 있음<br/>
-GET api/diagnosis<br/>
+GET api/diagnosis/doctor/diagnosis<br/>
 의사는 임의의 진료 요청서를 선택하여 처방을 내릴 수 있음<br/>
 POST api/diagnosis/doctor/diagnosis/:id<br/>
 

@@ -9,9 +9,8 @@ import {
   RequestDiagnosisOutput,
 } from './dtos/request-diagnosis.dto';
 import { LoadDiagnosisOutput } from './dtos/load-diagnosis.dto';
-import { PrescribeInput, PrescribeOutput } from './dtos/prescribe.dto';
 import { LoadDoctorDiagnosisOutput } from './dtos/doctor-load-diagnosis.dto';
-
+import { PrescribeInput, PrescribeOutput } from './dtos/prescribe.dto';
 @Controller('api/diagnosis')
 export class DiagnosisController {
   constructor(private readonly diagnosisService: DiagnosisService) {}
