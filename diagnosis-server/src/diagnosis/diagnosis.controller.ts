@@ -45,7 +45,7 @@ export class DiagnosisController {
   @Post('/doctor/diagnosis/:id')
   prescribe(
     @AuthUser() user: User,
-    @Body('id') prescribeInput: PrescribeInput,
+    @Body('') prescribeInput: PrescribeInput,
     @Param('id') diagnosisId: number,
   ): Promise<PrescribeOutput> {
     return this.diagnosisService.prescribe(user, prescribeInput, diagnosisId);
