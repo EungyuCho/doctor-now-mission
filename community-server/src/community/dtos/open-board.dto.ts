@@ -3,6 +3,6 @@ import { Board } from '../../../../domains/domains';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class OpenBoardOutput extends CoreOutput {
-  @ApiProperty({ nullable: true })
+  @ApiProperty({ nullable: true, type: [Board] })
   board?: Board;
 }

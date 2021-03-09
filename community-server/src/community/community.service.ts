@@ -62,7 +62,7 @@ export class CommunityService {
       }
 
       boardBuilder.leftJoinAndSelect('board.comments', 'comment');
-      boardBuilder.leftJoinAndSelect('comment.user', 'user');
+      boardBuilder.leftJoinAndSelect('comment.user', 'commentedUser');
       boardBuilder.orderBy('board.id', 'DESC');
       const boards = await boardBuilder.getMany();
 
