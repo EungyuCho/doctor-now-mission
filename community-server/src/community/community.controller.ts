@@ -29,7 +29,7 @@ export class CommunityController {
   constructor(private readonly communityService: CommunityService) {}
 
   @ApiHeader({ name: TOKEN_KEY, description: 'jwt token verify(User Only)' })
-  @ApiResponse({ type: CreateBoardOutput })
+  @ApiResponse({ type: CreateBoardOutput, status: 201 })
   @Role(['USER'])
   @Post('board')
   createBoard(
@@ -40,7 +40,7 @@ export class CommunityController {
   }
 
   @ApiHeader({ name: TOKEN_KEY, description: 'jwt token verify' })
-  @ApiResponse({ type: SearchBoardOutput })
+  @ApiResponse({ type: SearchBoardOutput, status: 200 })
   @Role(['Any'])
   @Get('board')
   searchBoard(
@@ -50,7 +50,7 @@ export class CommunityController {
   }
 
   @ApiHeader({ name: TOKEN_KEY, description: 'jwt token verify(User Only)' })
-  @ApiResponse({ type: UpdateBoardOutput })
+  @ApiResponse({ type: UpdateBoardOutput, status: 201 })
   @Role(['USER'])
   @Patch('board/:id')
   patchBoard(
@@ -62,7 +62,7 @@ export class CommunityController {
   }
 
   @ApiHeader({ name: TOKEN_KEY, description: 'jwt token verify' })
-  @ApiResponse({ type: OpenBoardOutput })
+  @ApiResponse({ type: OpenBoardOutput, status: 200 })
   @Role(['Any'])
   @Get('board/:id')
   openBoard(@Param('id') id: number): Promise<OpenBoardOutput> {
@@ -70,7 +70,7 @@ export class CommunityController {
   }
 
   @ApiHeader({ name: TOKEN_KEY, description: 'jwt token verify(User Only)' })
-  @ApiResponse({ type: DeleteBoardOutput })
+  @ApiResponse({ type: DeleteBoardOutput, status: 200 })
   @Role(['USER'])
   @Delete('board/:id')
   deleteBoard(
@@ -81,7 +81,7 @@ export class CommunityController {
   }
 
   @ApiHeader({ name: TOKEN_KEY, description: 'jwt token verify' })
-  @ApiResponse({ type: CreateCommentOutput })
+  @ApiResponse({ type: CreateCommentOutput, status: 201 })
   @Role(['Any'])
   @Post('board/:id/comment')
   createComment(

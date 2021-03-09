@@ -11,7 +11,7 @@ import { ApiResponse } from '@nestjs/swagger';
 export class UserController {
   constructor(private readonly usersService: UserService) {}
 
-  @ApiResponse({ type: CreateAccountOutput })
+  @ApiResponse({ type: CreateAccountOutput, status: 201 })
   @Post('account')
   createAccount(
     @Body() createAccountInput: CreateAccountInput,
@@ -19,7 +19,7 @@ export class UserController {
     return this.usersService.createAccount(createAccountInput);
   }
 
-  @ApiResponse({ type: LoginOutput })
+  @ApiResponse({ type: LoginOutput, status: 200 })
   @Post('login')
   login(@Body() loginInput: LoginInput): Promise<LoginOutput> {
     return this.usersService.login(loginInput);
